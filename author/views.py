@@ -1,6 +1,7 @@
 import os
 
 from django.conf import settings
+from django.http import Http404
 from rest_framework import mixins
 from rest_auth.views import UserDetailsView
 

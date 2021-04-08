@@ -27,7 +27,7 @@ SECRET_KEY = '(q9@7l4w2ck#*@%2dsk#xsoe2ii^6y_wc#g-7g*1r9g#2kx^hd'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,14 +39,19 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # django rest framework
     'rest_framework',
+    'rest_framework.authtoken',
+    'allauth',
+    'allauth.account',
     'rest_auth',
+    'rest_auth.registration',
 
     # my app
-    'author',
-    'book',
+    'author.apps.AuthorConfig',
+    'book.apps.BookConfig',
     
 ]
 
@@ -142,10 +147,22 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES' : [
         'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication'
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication'
     ]
 }
 
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'author.serializers.AuthorSerializer'
 }
+
+# AUTHENTICATION_BACKENDS = [
+#     'django.contrib.auth.backends.ModelBackend',
+#     'allauth.account.auth_backends.AuthenticationBackend',
+# ]
+
+SITE_ID = 1
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_EMAIL_REQUIRED = True

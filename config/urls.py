@@ -25,6 +25,8 @@ urlpatterns = [
     path(r'api/', include('book.urls')),
     path(r'api/author/user/', AuthorDetailView.as_view()),
     path(r'api/author/', include('rest_auth.urls')),
+    path(r'api/author/register/', include('rest_auth.registration.urls')),
+    # path(r'accounts/', include('allauth.urls')),
 ]
 
 if settings.DEBUG:
