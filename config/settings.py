@@ -44,11 +44,12 @@ INSTALLED_APPS = [
     # django rest framework
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_auth',
+    'rest_auth.registration',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'rest_auth',
-    'rest_auth.registration',
+    'corsheaders',
 
     # my app
     'author.apps.AuthorConfig',
@@ -64,7 +65,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+)
 
 ROOT_URLCONF = 'config.urls'
 
@@ -147,7 +154,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES' : [
-        'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication'
     ]

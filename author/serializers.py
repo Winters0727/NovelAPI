@@ -3,6 +3,7 @@ import os
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 
 from rest_framework import status, serializers
 from rest_framework.response import Response
@@ -17,6 +18,7 @@ from allauth.account.utils import setup_user_email
 from allauth.utils import get_username_max_length
 
 from .models import Author
+# from .hashers import PasswordHasher
 
 class AuthorRegisterSerializer(RegisterSerializer):
     nickname = serializers.CharField(max_length=20)
@@ -42,8 +44,8 @@ class AuthorRegisterSerializer(RegisterSerializer):
         self.cleaned_data['nickname'] = request.data['nickname']
         self.cleaned_data['profile_image'] = request.data['profile_image'] if 'profile_image' in request.data.keys() else os.path.join('profile', 'default.png')
         author = Author.objects.create_user(**self.cleaned_data)
-        adapter.save_user(request, author, self)
-        self.custom_signup(request, author)
+        # adapter.save_user(request, author, self)
+        self.custom_signup(request, author) # pass
         setup_user_email(request, author, [])
         return author
 
