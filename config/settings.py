@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'allauth',
     'allauth.account',
+    'allauth.socialaccount',
     'rest_auth',
     'rest_auth.registration',
 
@@ -151,6 +152,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication'
     ]
 }
+
+AUTH_USER_MODEL = 'author.Author'
 
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'author.serializers.AuthorSerializer'
