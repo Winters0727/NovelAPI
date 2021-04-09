@@ -26,6 +26,7 @@ class Chapter(models.Model):
         return f'{self.book.title} Chapter {self.index}'
         
     index = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=30)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     content = models.TextField()

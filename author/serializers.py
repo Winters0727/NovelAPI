@@ -50,11 +50,6 @@ class AuthorRegisterSerializer(RegisterSerializer):
         return author
 
 class AuthorSerializer(UserDetailsSerializer):
-    username = serializers.CharField(
-        max_length=get_username_max_length(),
-        min_length=allauth_settings.USERNAME_MIN_LENGTH,
-        required=allauth_settings.USERNAME_REQUIRED
-    )
     email = serializers.EmailField(required=allauth_settings.EMAIL_REQUIRED)
     nickname = serializers.CharField()
     profile_image = serializers.ImageField()
