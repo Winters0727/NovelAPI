@@ -10,18 +10,27 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Book, Chapter, Comment, Review
 from author.models import Author
 from .serializers import BookSerializer, ChapterSerializer, CommentSerializer, ReviewSerializer
-from .permissions import IsAuthor, IsAuthorOrReadOnly, IsNotAnonymous
+from .permissions import IsAuthor, IsBookAuthorOrReadOnly, IsChapterAuthorOrReadOnly, IsNotAnonymous
 
 # Create your views here.
 class BookListView(generics.ListCreateAPIView):
-    queryset = Book.objects.all()
+    def get_queryset(self):
+        query = {
+            'author__exact' : self.request.query_params.get('author')
+        }
+        if len(query.values()) == list(query.values()).count(None):
+            queryset = Book.objects.all()
+        else:
+            queryset = Book.objects.filter(**query)
+        return queryset
+
     serializer_class = BookSerializer
     permission_classes = [IsNotAnonymous]
 
 class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    permission_classes = [IsAuthorOrReadOnly]
+    permission_classes = [IsBookAuthorOrReadOnly]
 
     def delete(self, request, *args, **kwargs):
         book = get_object_or_404(Book, pk=kwargs['pk'])
@@ -30,24 +39,37 @@ class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
         return self.destroy(request, *args, **kwargs)
 
 class ChapterListView(generics.ListCreateAPIView):
-    queryset = Chapter.objects.all()
+    def get_queryset(self):
+        query = {
+            'book__exact' : self.request.query_params.get('book')
+        }
+        if len(query.values()) == list(query.values()).count(None):
+            queryset = Chapter.objects.all()
+        else:
+            queryset = Chapter.objects.filter(**query)
+        return queryset
+
     serializer_class = ChapterSerializer
-    permission_classes = [IsNotAnonymous]
+    permission_classes = [IsChapterAuthorOrReadOnly]
 
 class ChapterDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Chapter.objects.all()
     serializer_class = ChapterSerializer
     lookup_field = 'index'
-    permission_classes = [IsAuthorOrReadOnly]
+    permission_classes = [IsChapterAuthorOrReadOnly]
 
 class CommentListView(generics.ListCreateAPIView):
     def get_queryset(self):
-        params = {
-            "book" : self.request.query_params.get('book'),
-            "chapter" : self.request.query_params.get('chapter'),
+        query = {
+            "book__exact" : self.request.query_params.get('book'),
+            "chapter__exact" : self.request.query_params.get('chapter'),
         }
-        queryset = Comment.objects.filter(Q(book__exact=params["book"]) & Q(chapter__exact=params["chapter"]))
+        if len(query.values()) == list(query.values()).count(None):
+            queryset = Comment.objects.all()
+        else:
+            queryset = Comment.objects.filter(**query)
         return queryset
+
     serializer_class = CommentSerializer
     permission_classes = [IsNotAnonymous]
 

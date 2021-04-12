@@ -39,7 +39,7 @@ class Comment(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
     context = models.CharField(max_length=100, blank=False)
-    parent_comment = models.ForeignKey('self', on_delete=models.PROTECT)
+    parent_comment = models.ForeignKey('self', on_delete=models.PROTECT, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

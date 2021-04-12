@@ -17,12 +17,14 @@
 
 ### 소설 관련
 
-|                  **URL**                   | **Method** |                           **Data**                           |       **설명**       |
-| :----------------------------------------: | :--------: | :----------------------------------------------------------: | :------------------: |
-|                 api/book/                  |    POST    | {<br/>title : 소설 제목<br/>cover : 커버 이미지<br/>author : 작가<br/>} |      소설 생성       |
-|                                            |    GET     |                                                              | 소설 리스트 가져오기 |
-|            api/book/\<int:pk\>/            |    GET     |                                                              |  소설 정보 가져오기  |
-|        api/book/\<int:pk\>/chapter/        |    POST    | {<br/>title : 챕터 제목<br/>content : 챕터 내용<br/>author : 작가<br/>book : 소설<br/>} |      챕터 생성       |
-|                                            |    GET     |                                                              | 챕터 리스트 가져오기 |
-| api/book/\<int:pk\>/chapter/\<int:index\>/ |    GET     |                                                              |  챕터 정보 가져오기  |
+|            **URL**            | **Method** |                           **Data**                           |       **설명**       |
+| :---------------------------: | :--------: | :----------------------------------------------------------: | :------------------: |
+|           api/book/           |    POST    | {<br/>title : 소설 제목<br/>cover : 커버 이미지<br/>author : 작가<br/>} |      소설 생성       |
+|      api/book/?author=?       |    GET     |                                                              | 소설 리스트 가져오기 |
+|     api/book/\<int:pk\>/      |    GET     |                                                              |  소설 정보 가져오기  |
+|         api/chapter/          |    POST    | {<br/>title : 챕터 제목<br/>content : 챕터 내용<br/>author : 작가<br/>book : 소설<br/>} |      챕터 생성       |
+|      api/chapter/?book=?      |    GET     |                                                              | 챕터 리스트 가져오기 |
+|  api/chapter/\<int:index\>/   |    GET     |                                                              |  챕터 정보 가져오기  |
+|         api/comment/          |    POST    | {<br/>author : 댓글 작성 회원<br/>book : 소설<br/>chapter : 챕터<br/>context : 댓글내용<br/>parent_comment : 대댓글<br/>} |    댓글 작성하기     |
+| api/comment/?book=?&chapter=? |    GET     |                                                              |    댓글 가져오기     |
 
