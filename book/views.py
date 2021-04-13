@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Book, Chapter, Comment, Review
 from author.models import Author
 from .serializers import BookSerializer, ChapterSerializer, CommentSerializer, ReviewSerializer
-from .permissions import IsAuthor, IsBookAuthorOrReadOnly, IsChapterAuthorOrReadOnly, IsNotAnonymous
+from .permissions import IsAuthor, IsBookAuthorOrReadOnly, IsChapterAuthorOrReadOnly, IsReviewAuthorOrReadOnly, IsNotAnonymous
 
 # Create your views here.
 class BookListView(generics.ListCreateAPIView):
@@ -74,24 +74,25 @@ class CommentListView(generics.ListCreateAPIView):
     permission_classes = [IsNotAnonymous]
 
 class CommentDeleteView(generics.DestroyAPIView):
-    def get_object(self, pk):
-        comment_object = get_object_or_404(Comment, pk=pk)
-        return comment_object
+    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = [IsAuthor]
 
-# class ReviewListView(generics.ListCreateAPIView):
-#     def get_queryset(self):
-#         params = {
-#             "author" : self.request.query_params.get('author'),
-#             "book" : self.request.query_params.get('book'),
-#         }
-#         queryset = Review.objects.filter(Q(author__exact=params["author"]) & Q(book__exact=params["book"]))
-#         return queryset
-#     serializer_class = ReviewSerializer
-#     permission_classes = [IsNotAnonymous]
+class ReviewListView(generics.ListCreateAPIView):
+    def get_queryset(self):
+        query = {
+            "author__exact" : self.request.query_params.get('author'),
+            "book__exact" : self.request.query_params.get('book'),
+        }
+        if len(query.values()) == list(query.values()).count(None):
+            queryset = Review.objects.filter(**query)
+        else:
+            queryset = Review.objects.all()
+        return queryset
+    serializer_class = ReviewSerializer
+    permission_classes = [IsNotAnonymous]
 
-# class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Review.objects.all()
-#     serializer_class = ReviewSerializer
-#     permission_classes = [IsAuthorOrReadOnly]
+class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = [IsReviewAuthorOrReadOnly]
