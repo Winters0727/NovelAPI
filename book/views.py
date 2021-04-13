@@ -53,6 +53,12 @@ class ChapterListView(generics.ListCreateAPIView):
     permission_classes = [IsChapterAuthorOrReadOnly]
 
 class ChapterDetailView(generics.RetrieveUpdateDestroyAPIView):
+    def get(self, request, *args, **kwargs):
+        chapter = get_object_or_404(Chapter, pk=kwargs['index'])
+        chapter.view_count += 1
+        chapter.save()
+        return self.retrieve(request, *args, **kwargs)
+
     queryset = Chapter.objects.all()
     serializer_class = ChapterSerializer
     lookup_field = 'index'
@@ -93,6 +99,12 @@ class ReviewListView(generics.ListCreateAPIView):
     permission_classes = [IsNotAnonymous]
 
 class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
+    def get(self, request, *args, **kwargs):
+        review = get_object_or_404(Review, pk=kwargs['pk'])
+        review.view_count += 1
+        review.save()
+        return self.retrieve(request, *args, **kwargs)
+
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [IsReviewAuthorOrReadOnly]

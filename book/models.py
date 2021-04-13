@@ -2,6 +2,7 @@ import os
 
 from django.db import models
 from django.conf import settings
+# from django.contrib.postgres.fields import ArrayField, JSONField
 
 # Create your models here.
 
@@ -30,6 +31,7 @@ class Chapter(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     content = models.TextField()
+    view_count = models.IntegerField(default=0, blank=True)
 
 class Comment(models.Model):
     def __str__(self):
@@ -53,4 +55,5 @@ class Review(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     title = models.CharField(max_length=30)
     context = models.TextField()
+    view_count = models.IntegerField(default=0, blank=True)
     review_point = models.IntegerField(default=5)

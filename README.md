@@ -12,6 +12,10 @@
 
 - djangorestframework==3.12.4
 
+- psycopg2==2.8.6
+
+- python-decouple==3.4
+
   
 
 ### 기본 설정 방법
