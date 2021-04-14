@@ -56,7 +56,7 @@ class AuthorSerializer(UserDetailsSerializer):
     
     class Meta(UserDetailsSerializer.Meta):
         model = Author
-        fields = ('username', 'nickname', 'email', 'profile_image', )
+        fields = ('username', 'nickname', 'email', 'profile_image',)
         read_only_fields = ('username', 'email', )
 
     def update(self, instance, validated_data):

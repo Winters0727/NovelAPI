@@ -3,6 +3,9 @@ import os
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+
+# from imagekit.models import ImageSpecField
+# from imagekit.processors import Thumbnail
 # from allauth.socialaccount.models import SocialAccount
 
 from book.models import Book, Review

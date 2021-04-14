@@ -19,7 +19,7 @@ class BookListView(generics.ListCreateAPIView):
             'author__exact' : self.request.query_params.get('author')
         }
         if len(query.values()) == list(query.values()).count(None):
-            queryset = Book.objects.all()
+            queryset = Book.objects.all().select_related('author')
         else:
             queryset = Book.objects.filter(**query)
         return queryset
@@ -28,7 +28,7 @@ class BookListView(generics.ListCreateAPIView):
     permission_classes = [IsNotAnonymous]
 
 class BookDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Book.objects.all()
+    queryset = Book.objects.all().select_related('author')
     serializer_class = BookSerializer
     permission_classes = [IsBookAuthorOrReadOnly]
 
@@ -59,7 +59,7 @@ class ChapterDetailView(generics.RetrieveUpdateDestroyAPIView):
         chapter.save()
         return self.retrieve(request, *args, **kwargs)
 
-    queryset = Chapter.objects.all()
+    queryset = Chapter.objects.all().select_related('book')
     serializer_class = ChapterSerializer
     lookup_field = 'index'
     permission_classes = [IsChapterAuthorOrReadOnly]
@@ -71,7 +71,7 @@ class CommentListView(generics.ListCreateAPIView):
             "chapter__exact" : self.request.query_params.get('chapter'),
         }
         if len(query.values()) == list(query.values()).count(None):
-            queryset = Comment.objects.all()
+            queryset = Comment.objects.all().select_related('chapter')
         else:
             queryset = Comment.objects.filter(**query)
         return queryset
@@ -93,7 +93,7 @@ class ReviewListView(generics.ListCreateAPIView):
         if len(query.values()) == list(query.values()).count(None):
             queryset = Review.objects.filter(**query)
         else:
-            queryset = Review.objects.all()
+            queryset = Review.objects.all().select_related('book')
         return queryset
     serializer_class = ReviewSerializer
     permission_classes = [IsNotAnonymous]
