@@ -1,4 +1,6 @@
 import os
+from PIL import Image
+from io import BytesIO
 
 from django.db.models import Q, F
 from django.shortcuts import get_object_or_404
@@ -7,13 +9,19 @@ from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Book, Chapter, Comment, Review
+from .models import Book, Chapter, ChapterComment, Review, ReviewComment
 from author.models import Author
-from .serializers import BookSerializer, ChapterSerializer, CommentSerializer, ReviewSerializer
+from .serializers import BookSerializer, ChapterSerializer, ChapterCommentSerializer, ReviewSerializer, ReviewCommentSerializer
 from .permissions import IsAuthor, IsBookAuthorOrReadOnly, IsChapterAuthorOrReadOnly, IsReviewAuthorOrReadOnly, IsNotAnonymous
 
 # Create your views here.
 class BookListView(generics.ListCreateAPIView):
+    # def post(self, request, *args, **kwargs):
+    #     cover_image = Image.open(request.data.get('cover'))
+    #     new_cover_image = cover_image.resize((100, 100))
+    #     new_cover_image.save(os.path.join(settings.MEDIA_URL, 'cover-thumbnail', request.data.get("title"), f'{request.data.get("title")}-cover{os.path.splitext(request.data.get("cover").name)[1]}'))
+    #     return self.create(request, *args, **kwargs)
+
     def get_queryset(self):
         query = {
             'author__exact' : self.request.query_params.get('author')
@@ -64,24 +72,24 @@ class ChapterDetailView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'index'
     permission_classes = [IsChapterAuthorOrReadOnly]
 
-class CommentListView(generics.ListCreateAPIView):
+class ChapterCommentListView(generics.ListCreateAPIView):
     def get_queryset(self):
         query = {
             "book__exact" : self.request.query_params.get('book'),
             "chapter__exact" : self.request.query_params.get('chapter'),
         }
         if len(query.values()) == list(query.values()).count(None):
-            queryset = Comment.objects.all().select_related('chapter')
+            queryset = ChapterComment.objects.all().select_related('chapter')
         else:
-            queryset = Comment.objects.filter(**query)
+            queryset = ChapterComment.objects.filter(**query)
         return queryset
 
-    serializer_class = CommentSerializer
+    serializer_class = ChapterCommentSerializer
     permission_classes = [IsNotAnonymous]
 
-class CommentDeleteView(generics.DestroyAPIView):
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
+class ChapterCommentDeleteView(generics.DestroyAPIView):
+    queryset = ChapterComment.objects.all()
+    serializer_class = ChapterCommentSerializer
     permission_classes = [IsAuthor]
 
 class ReviewListView(generics.ListCreateAPIView):
@@ -108,3 +116,22 @@ class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [IsReviewAuthorOrReadOnly]
+
+class ReviewCommentListView(generics.ListCreateAPIView):
+    def get_queryset(self):
+        query = {
+            "review__exact" : self.request.query_params.get('review'),
+        }
+        if len(query.values()) == list(query.values()).count(None):
+            queryset = ReviewComment.objects.all().select_related('review')
+        else:
+            queryset = ReviewComment.objects.filter(**query)
+        return queryset
+
+    serializer_class = ReviewCommentSerializer
+    permission_classes = [IsNotAnonymous]
+
+class ReviewCommentDeleteView(generics.DestroyAPIView):
+    queryset = ReviewComment.objects.all()
+    serializer_class = ReviewCommentSerializer
+    permission_classes = [IsAuthor]
