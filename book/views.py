@@ -9,10 +9,9 @@ from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Book, Chapter, ChapterComment, Review, ReviewComment
-from author.models import Author
-from .serializers import BookSerializer, ChapterSerializer, ChapterCommentSerializer, ReviewSerializer, ReviewCommentSerializer
-from .permissions import IsAuthor, IsBookAuthorOrReadOnly, IsChapterAuthorOrReadOnly, IsReviewAuthorOrReadOnly, IsNotAnonymous
+from .models import Book, Chapter, ChapterComment
+from .serializers import BookSerializer, ChapterSerializer, ChapterCommentSerializer
+from .permissions import IsAuthor, IsBookAuthorOrReadOnly, IsChapterAuthorOrReadOnly, IsNotAnonymous
 
 # Create your views here.
 class BookListView(generics.ListCreateAPIView):
@@ -90,48 +89,4 @@ class ChapterCommentListView(generics.ListCreateAPIView):
 class ChapterCommentDeleteView(generics.DestroyAPIView):
     queryset = ChapterComment.objects.all()
     serializer_class = ChapterCommentSerializer
-    permission_classes = [IsAuthor]
-
-class ReviewListView(generics.ListCreateAPIView):
-    def get_queryset(self):
-        query = {
-            "author__exact" : self.request.query_params.get('author'),
-            "book__exact" : self.request.query_params.get('book'),
-        }
-        if len(query.values()) == list(query.values()).count(None):
-            queryset = Review.objects.filter(**query)
-        else:
-            queryset = Review.objects.all().select_related('book')
-        return queryset
-    serializer_class = ReviewSerializer
-    permission_classes = [IsNotAnonymous]
-
-class ReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
-    def get(self, request, *args, **kwargs):
-        review = get_object_or_404(Review, pk=kwargs['pk'])
-        review.view_count += 1
-        review.save()
-        return self.retrieve(request, *args, **kwargs)
-
-    queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
-    permission_classes = [IsReviewAuthorOrReadOnly]
-
-class ReviewCommentListView(generics.ListCreateAPIView):
-    def get_queryset(self):
-        query = {
-            "review__exact" : self.request.query_params.get('review'),
-        }
-        if len(query.values()) == list(query.values()).count(None):
-            queryset = ReviewComment.objects.all().select_related('review')
-        else:
-            queryset = ReviewComment.objects.filter(**query)
-        return queryset
-
-    serializer_class = ReviewCommentSerializer
-    permission_classes = [IsNotAnonymous]
-
-class ReviewCommentDeleteView(generics.DestroyAPIView):
-    queryset = ReviewComment.objects.all()
-    serializer_class = ReviewCommentSerializer
     permission_classes = [IsAuthor]

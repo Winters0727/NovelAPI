@@ -22,10 +22,11 @@ from author.views import AuthorRegisterView, AuthorDetailView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(r'api/', include('book.urls')),
     path(r'api/author/', include('rest_auth.urls')),
     path(r'api/author/user/', AuthorDetailView.as_view()),
     path(r'api/author/register/', AuthorRegisterView.as_view()),
+    path(r'api/book/', include('book.urls')),
+    path(r'api/review/', include('review.urls')),
     # path(r'accounts/', include('allauth.urls')),
 ]
 

@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     # my app
     'author.apps.AuthorConfig',
     'book.apps.BookConfig',
+    'review.apps.ReviewConfig',
     
 ]
 
@@ -174,6 +175,16 @@ AUTH_USER_MODEL = 'author.Author'
 
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'author.serializers.AuthorSerializer'
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
 }
 
 # AUTHENTICATION_BACKENDS = [

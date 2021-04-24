@@ -8,7 +8,8 @@ from django.contrib.auth.models import AbstractUser
 # from imagekit.processors import Thumbnail
 # from allauth.socialaccount.models import SocialAccount
 
-from book.models import Book, Review
+from book.models import Book
+from review.models import Review
 
 # Create your models here.
 
