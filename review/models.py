@@ -27,3 +27,13 @@ class ReviewComment(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+class TemporaryReview(models.Model):
+    def __str__(self):
+        return f'{self.author} : {self.title}'
+    
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    title = models.CharField(max_length=30)
+    context = models.TextField()
+    review_point = models.IntegerField(default=5)

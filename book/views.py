@@ -9,8 +9,8 @@ from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Book, Chapter, ChapterComment
-from .serializers import BookSerializer, ChapterSerializer, ChapterCommentSerializer
+from .models import Book, Chapter, ChapterComment, TemporaryChapter
+from .serializers import BookSerializer, ChapterSerializer, ChapterCommentSerializer, TemporaryChapterSerializer
 from .permissions import IsAuthor, IsBookAuthorOrReadOnly, IsChapterAuthorOrReadOnly, IsNotAnonymous
 
 # Create your views here.
@@ -89,4 +89,30 @@ class ChapterCommentListView(generics.ListCreateAPIView):
 class ChapterCommentDeleteView(generics.DestroyAPIView):
     queryset = ChapterComment.objects.all()
     serializer_class = ChapterCommentSerializer
+    permission_classes = [IsAuthor]
+
+class TemporaryChapterListView(generics.ListCreateAPIView):
+    def get_queryset(self):
+        query = {
+            'book__exact' : self.request.query_params.get('book')
+        }
+        if len(query.values()) == list(query.values()).count(None):
+            queryset = TemporaryChapter.objects.all()
+        else:
+            queryset = TemporaryChapter.objects.filter(**query)
+        return queryset
+
+    serializer_class = TemporaryChapterSerializer
+    permission_classes = [IsAuthor]
+
+class TemporaryChapterDetailView(generics.RetrieveUpdateDestroyAPIView):
+    def get(self, request, *args, **kwargs):
+        chapter = get_object_or_404(TemporaryChapter, pk=kwargs['index'])
+        chapter.view_count += 1
+        chapter.save()
+        return self.retrieve(request, *args, **kwargs)
+
+    queryset = TemporaryChapter.objects.all().select_related('book')
+    serializer_class = TemporaryChapterSerializer
+    lookup_field = 'index'
     permission_classes = [IsAuthor]

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Book, Chapter, ChapterComment
+from .models import Book, Chapter, ChapterComment, TemporaryChapter
 
 class BookSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,4 +15,9 @@ class ChapterSerializer(serializers.ModelSerializer):
 class ChapterCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChapterComment
+        fields = '__all__'
+
+class TemporaryChapterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TemporaryChapter
         fields = '__all__'

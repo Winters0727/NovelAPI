@@ -5,8 +5,8 @@ from rest_framework import generics, viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Review, ReviewComment
-from .serializers import ReviewSerializer, ReviewCommentSerializer
+from .models import Review, ReviewComment, TemporaryReview
+from .serializers import ReviewSerializer, ReviewCommentSerializer, TemporaryReviewSerializer
 from .permissions import IsAuthor, IsReviewAuthorOrReadOnly, IsNotAnonymous
 
 # Create your views here.
@@ -53,4 +53,29 @@ class ReviewCommentListView(generics.ListCreateAPIView):
 class ReviewCommentDeleteView(generics.DestroyAPIView):
     queryset = ReviewComment.objects.all()
     serializer_class = ReviewCommentSerializer
+    permission_classes = [IsAuthor]
+
+class TemporaryReviewListView(generics.ListCreateAPIView):
+    def get_queryset(self):
+        query = {
+            "author__exact" : self.request.query_params.get('author'),
+            "book__exact" : self.request.query_params.get('book'),
+        }
+        if len(query.values()) == list(query.values()).count(None):
+            queryset = TemporaryReview.objects.filter(**query)
+        else:
+            queryset = TemporaryReview.objects.all().select_related('book')
+        return queryset
+    serializer_class = TemporaryReviewSerializer
+    permission_classes = [IsAuthor]
+
+class TemporaryReviewDetailView(generics.RetrieveUpdateDestroyAPIView):
+    def get(self, request, *args, **kwargs):
+        review = get_object_or_404(TemporaryReview, pk=kwargs['pk'])
+        review.view_count += 1
+        review.save()
+        return self.retrieve(request, *args, **kwargs)
+
+    queryset = TemporaryReview.objects.all()
+    serializer_class = TemporaryReviewSerializer
     permission_classes = [IsAuthor]
