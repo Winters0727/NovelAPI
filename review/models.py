@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from book.models import Book
 
@@ -13,7 +14,7 @@ class Review(models.Model):
     title = models.CharField(max_length=30)
     context = models.TextField()
     view_count = models.IntegerField(default=0, blank=True)
-    review_point = models.IntegerField(default=5)
+    review_point = models.IntegerField(default=5, validators=[MinValueValidator(0), MaxValueValidator(10)])
 
 class ReviewComment(models.Model):
     def __str__(self):
@@ -36,4 +37,4 @@ class TemporaryReview(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     title = models.CharField(max_length=30)
     context = models.TextField()
-    review_point = models.IntegerField(default=5)
+    review_point = models.IntegerField(default=5, validators=[MinValueValidator(0), MaxValueValidator(10)])

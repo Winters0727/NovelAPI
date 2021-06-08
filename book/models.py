@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from django.db import models
 from django.conf import settings
@@ -40,6 +41,11 @@ class Book(models.Model):
 class Chapter(models.Model):
     def __str__(self):
         return f'{self.book.title} Chapter {self.index}'
+
+    def save(self):
+        self.book.updated_at = datetime.now()
+        self.book.save()
+        super().save()
         
     index = models.IntegerField()
     title = models.CharField(max_length=30)
