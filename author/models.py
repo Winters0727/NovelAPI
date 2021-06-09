@@ -8,9 +8,6 @@ from django.contrib.auth.models import AbstractUser
 # from imagekit.processors import Thumbnail
 # from allauth.socialaccount.models import SocialAccount
 
-from book.models import Book
-from review.models import Review
-
 # Create your models here.
 
 class Author(AbstractUser):
@@ -22,6 +19,6 @@ class Author(AbstractUser):
     
     nickname = models.CharField(max_length=20)
     profile_image = models.ImageField(blank=True, upload_to=profile_path, default=os.path.join('profile', 'default.png'))
-    followers = models.ManyToManyField('self', blank=True, related_name='followed_by')
-    like_books = models.ManyToManyField(Book, blank=True, related_name='like_users')
-    like_reviews = models.ManyToManyField(Review, blank=True, related_name='like_users')
+    # followers = models.ManyToManyField('self', blank=True, related_name='followed_by')
+    # like_books = models.ManyToManyField('book.Book', blank=True, related_name='like_users')
+    # like_reviews = models.ManyToManyField('review.Review', blank=True, related_name='like_users')

@@ -12,7 +12,6 @@ class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = '__all__'
-        ordering = ['-updated_at']
 
 class ChapterSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)
